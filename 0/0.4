@@ -1,1 +1,42 @@
+sequenceDiagram
+    participant browser
+    participant server
+    participant database
+    
+    Note right of browser: User types a new note and clicks 'Save'
+    
+    browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note
+    activate server
+    server-->>database: Insert new note into the database
+    deactivate server
+    
+    Note right of server: Server processes the request, inserts the note into the database
+    
+    database-->>server: Confirmation of successful insertion
+    activate server
+    server-->>browser: Response: Note saved successfully
+    deactivate server
+    
+    Note right of browser: Browser receives the response, displays a success message
+    
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/notes
+    activate server
+    server-->>browser: Updated list of notes (including the new one)
+    deactivate server
+    
+    Note right of browser: Browser fetches the updated list of notes from the server
+    
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.js
+    activate server
+    server-->>browser: the JavaScript file
+    deactivate server
+    
+    Note right of browser: The browser starts executing the JavaScript code to update the UI
+    
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/data.json
+    activate server
+    server-->>browser: Updated JSON data with the new note
+    deactivate server
+    
+    Note right of browser: The browser executes the callback function to render the updated notes list
 

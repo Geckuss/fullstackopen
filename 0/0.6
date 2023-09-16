@@ -1,0 +1,31 @@
+sequenceDiagram
+    participant browser
+    participant server
+    participant spa
+    participant database
+    
+    Note right of browser: User interacts with the SPA
+    
+    browser->>spa: User types a new note and clicks 'Save'
+    
+    Note right of spa: The SPA handles the note creation without a full page reload
+    
+    spa->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note
+    activate server
+    server-->>database: Insert new note into the database
+    deactivate server
+    
+    Note right of server: Server processes the request, inserts the note into the database
+    
+    database-->>server: Confirmation of successful insertion
+    activate server
+    server-->>spa: Response: Note saved successfully
+    deactivate server
+    
+    Note right of spa: SPA receives the response, displays a success message
+    
+    spa->>browser: Update UI to show the new note
+    
+    Note right of browser: SPA updates the UI dynamically to display the new note
+    
+    browser->>spa: User continues interacting with the SPA

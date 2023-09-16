@@ -1,0 +1,34 @@
+sequenceDiagram
+    participant browser
+    participant server
+    participant spa
+    
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/spa
+    activate server
+    server-->>browser: HTML document for SPA
+    deactivate server
+    
+    Note right of browser: The browser loads the SPA HTML document
+    
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.js
+    activate server
+    server-->>browser: the JavaScript file
+    deactivate server
+    
+    Note right of browser: The browser loads the JavaScript file for the SPA
+    
+    browser->>spa: User interacts with the Single Page App
+    
+    Note right of spa: The SPA handles user interactions without page reloads
+    
+    spa->>server: API requests to fetch data
+    activate server
+    server-->>spa: JSON data for the SPA
+    deactivate server
+    
+    Note right of spa: The SPA fetches data from the server using API calls
+    
+    spa->>browser: Updating the UI with new data
+    Note right of browser: The SPA updates the UI dynamically without full page reloads
+    
+    browser->>spa: User continues interacting with the SPA

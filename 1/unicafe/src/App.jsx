@@ -21,6 +21,18 @@ const Statistics = props => {
   )
 }
 
+const Button = ({ onClick, text }) => {
+  return (
+    <button onClick={onClick}>{text}</button>
+  );
+}
+
+const StatisticLine = ({ text, value }) => {
+  return (
+    <p>{text}: {value}</p>
+  );
+}
+
 const App = () => {
   // tallenna napit omaan tilaansa
   const [good, setGood] = useState(0)
@@ -57,9 +69,9 @@ const App = () => {
   return (
     <div>
       <h2>Feedback</h2>
-      <button onClick={() => handleButtonClick('Good')}>Good</button>
-      <button onClick={() => handleButtonClick('Neutral')}>Neutral</button>
-      <button onClick={() => handleButtonClick('Bad')}>Bad</button>
+      <Button onClick={() => handleButtonClick('Good')} text="Good" />
+      <Button onClick={() => handleButtonClick('Neutral')} text="Neutral" />
+      <Button onClick={() => handleButtonClick('Bad')} text="Bad"/>
       <div>
         <Statistics good = {good} neutral = {neutral} bad = {bad} allVotes = {allVotes} average = {average} positive = {positive}/>
       </div>

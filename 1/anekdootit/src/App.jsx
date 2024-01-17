@@ -33,6 +33,8 @@ const App = () => {
     }
   }
 
+  const mostVotedIndex = points.indexOf(Math.max(...points));
+
   return (
     <>
       <div>
@@ -40,10 +42,18 @@ const App = () => {
         <Button onClick={() => handleButtonClick('Vote')} text="Vote" />
       </div>
       <div>
+        <h2>Current Anecdote</h2>
         {anecdotes[selected]}
       </div>
       <div>
-        This anecdote has {points[selected]} votes
+        <p>This anecdote has {points[selected]} votes</p>
+      </div>
+      <div>
+        <h2>Most Voted Anecdote</h2>
+        {anecdotes[mostVotedIndex]}
+      </div>
+      <div>
+        <p>It has {points[mostVotedIndex]} votes</p>
       </div>
     </>
   );

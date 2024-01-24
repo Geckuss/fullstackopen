@@ -1,5 +1,38 @@
 import { useState } from 'react'
 
+// Filter component
+const Filter = ({ searchTerm, handleSearchChange }) => (
+  <div>
+    Search: <input value={searchTerm} onChange={handleSearchChange} />
+  </div>
+)
+
+// PersonForm component
+const PersonForm = ({ newName, newNumber, handleNameChange, handleNumberChange, handleConcat }) => (
+  <form onSubmit={handleConcat}>
+    <div>
+      Name: <input value={newName} onChange={handleNameChange}/>
+    </div>
+    <div>
+      Number: <input value={newNumber} onChange={handleNumberChange}/>
+    </div>
+    <div>
+      <button type="submit">Add</button>
+    </div>
+  </form>
+)
+
+// Persons component
+const Persons = ({ contacts }) => (
+  <div>
+    {contacts.map((contact, index) => (
+      <p key={index}>
+        {contact.name}: {contact.number}
+      </p>
+    ))}
+  </div>
+)
+
 const App = () => {
   const [contacts, setContacts] = useState([
     { name: 'Arto Hellas', number: '040-123456' },
@@ -40,28 +73,15 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <form onSubmit={handleConcat}>
-        <div>
-          Name: <input value={newName} onChange={handleNameChange}/>
-        </div>
-        <div>
-          Number: <input value={newNumber} onChange={handleNumberChange}/>
-        </div>
-        <div>
-          <button type="submit">Add</button>
-        </div>
-      </form>
-      <h2>Numbers</h2>
-      <div>
-      <div>
-        Search: <input value={searchTerm} onChange={handleSearchChange} />
-      </div>
-        {filteredContacts.map((contact, index) => (
-          <p key={index}>
-            {contact.name}: {contact.number}
-          </p>
-        ))}
-      </div>
+      <Filter searchTerm={searchTerm} handleSearchChange={handleSearchChange} />
+      <PersonForm
+        newName={newName}
+        newNumber={newNumber}
+        handleNameChange={handleNameChange}
+        handleNumberChange={handleNumberChange}
+        handleConcat={handleConcat}
+      />
+      <Persons contacts={filteredContacts} />
     </div>
   )
 }

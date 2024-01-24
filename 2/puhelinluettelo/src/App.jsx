@@ -2,10 +2,14 @@ import { useState } from 'react'
 
 const App = () => {
   const [contacts, setContacts] = useState([
-    { name: 'Arto Hellas', number: '040-123456' }
+    { name: 'Arto Hellas', number: '040-123456' },
+    { name: 'Ada Lovelace', number: '39-44-5323523' },
+    { name: 'Dan Abramov', number: '12-43-234345' },
+    { name: 'Mary Poppendieck', number: '39-23-6423122' }
   ]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
 
   const handleConcat = (event) => {
     event.preventDefault();
@@ -18,13 +22,19 @@ const App = () => {
       setNewNumber('');
     }
   }
-
   const handleNameChange = (event) => {
     setNewName(event.target.value);
   }
   const handleNumberChange = (event) => {
     setNewNumber(event.target.value);
   }
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  }
+  const filteredContacts = contacts.filter(contact =>
+    contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    contact.number.includes(searchTerm)
+  );
   
 
   return (
@@ -43,7 +53,10 @@ const App = () => {
       </form>
       <h2>Numbers</h2>
       <div>
-        {contacts.map((contact, index) => (
+      <div>
+        Search: <input value={searchTerm} onChange={handleSearchChange} />
+      </div>
+        {filteredContacts.map((contact, index) => (
           <p key={index}>
             {contact.name}: {contact.number}
           </p>

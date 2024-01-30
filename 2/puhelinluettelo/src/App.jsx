@@ -36,6 +36,14 @@ const Persons = ({ contacts, handleCheckboxChange }) => (
   </div>
 )
 
+const NotificationWrapper = ({ message, children }) => {
+  return (
+    <div style={{ minHeight: '50px' }}>
+      {message ? children : null}
+    </div>
+  )
+}
+
 const Notification = ({ message }) => {
   if (message === null) {
     return null
@@ -157,16 +165,24 @@ const App = () => {
     : contacts
   
 
-  return (
-    <div>
-      <Notification message={notification} />
-      <ErrorNotification message={error} />
-      <Filter searchTerm={searchTerm} handleSearchChange={handleSearchChange} />
-      <PersonForm newName={newName} newNumber={newNumber} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} handleConcat={handleConcat} />
-      <Persons contacts={contactsToShow} handleCheckboxChange={handleCheckboxChange} />
-      <button onClick={handleDeleteSelected}>Delete Selected</button>
-    </div>
-  )
+    return (
+      <div className="app-container">
+        <div className="contacts-container">
+          <Persons contacts={contactsToShow} handleCheckboxChange={handleCheckboxChange} />
+          <button onClick={handleDeleteSelected}>Delete Selected</button>
+        </div>
+        <div className="controls-container">
+          <NotificationWrapper message={notification}>
+            <Notification message={notification} />
+          </NotificationWrapper>
+          <NotificationWrapper message={error}>
+            <ErrorNotification message={error} />
+          </NotificationWrapper>
+          <Filter searchTerm={searchTerm} handleSearchChange={handleSearchChange} />
+          <PersonForm newName={newName} newNumber={newNumber} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} handleConcat={handleConcat} />
+        </div>
+      </div>
+    )
 }
 
 export default App

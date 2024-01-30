@@ -55,9 +55,14 @@ const App = () => {
     if (isNameExist) {
       alert(`${newName} is already added to phonebook`);
     } else {
-      setContacts(contacts.concat({ name: newName, number: newNumber}));
-      setNewName('');
-      setNewNumber('');
+      const newContact = { name: newName, number: newNumber }
+      axios
+        .post('http://localhost:3001/persons', newContact) // Replace with your server URL
+        .then(response => {
+          setContacts(contacts.concat(response.data));
+          setNewName('');
+          setNewNumber('');
+        })
     }
   }
   const handleNameChange = (event) => {

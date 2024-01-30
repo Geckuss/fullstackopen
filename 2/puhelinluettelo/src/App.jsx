@@ -48,7 +48,17 @@ const Notification = ({ message }) => {
   )
 }
 
+const ErrorNotification = ({ message }) => {
+  if (message === null) {
+    return null
+  }
 
+  return (
+    <div className="error">
+      {message}
+    </div>
+  )
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -59,6 +69,7 @@ const App = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedContacts, setSelectedContacts] = useState([])
   const [notification, setNotification] = useState(null)
+  const [error, setError] = useState(null)
 
   // Fetch data from server
   useEffect(() => {
@@ -109,6 +120,13 @@ const App = () => {
               setNotification(null)
             }, 5000)
           })
+          .catch(error => {
+            setError(`Information of ${newName} has already been removed from server`)
+            setTimeout(() => {
+              setError(null)
+            }, 5000)
+            setContacts(contacts.filter(contact => contact.id !== existingContact.id))
+          })
       }
     } else {
       const newContact = { name: newName, number: newNumber }
@@ -142,6 +160,7 @@ const App = () => {
   return (
     <div>
       <Notification message={notification} />
+      <ErrorNotification message={error} />
       <Filter searchTerm={searchTerm} handleSearchChange={handleSearchChange} />
       <PersonForm newName={newName} newNumber={newNumber} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} handleConcat={handleConcat} />
       <Persons contacts={contactsToShow} handleCheckboxChange={handleCheckboxChange} />

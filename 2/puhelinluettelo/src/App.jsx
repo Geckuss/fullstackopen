@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getAll, create, deleteContact } from './components/contactsService'
+import { getAll, create, updateContact, deleteContact } from './components/contactsService'
 
 // Filter component
 const Filter = ({ searchTerm, handleSearchChange }) => (
@@ -75,9 +75,16 @@ const App = () => {
 
   const handleConcat = (event) => {
     event.preventDefault();
-    const isNameExist = contacts.some(contact => contact.name === newName);
-    if (isNameExist) {
-      alert(`${newName} is already added to phonebook`);
+    const existingContact = contacts.find(contact => contact.name === newName);
+    
+    if (existingContact) {
+      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+        const updatedContact = { ...existingContact, number: newNumber };
+        updateContact(existingContact.id, updatedContact)
+          .then(response => {
+            setContacts(contacts.map(contact => contact.id !== existingContact.id ? contact : response.data));
+          })
+      }
     } else {
       const newContact = { name: newName, number: newNumber }
       create(newContact)
@@ -88,6 +95,7 @@ const App = () => {
         })
     }
   }
+
   const handleNameChange = (event) => {
     setNewName(event.target.value);
   }

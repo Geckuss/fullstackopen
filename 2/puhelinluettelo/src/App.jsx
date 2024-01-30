@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getAll, create } from './components/contactsService'
+import { getAll, create, deleteContact } from './components/contactsService'
 
 // Filter component
 const Filter = ({ searchTerm, handleSearchChange }) => (
@@ -24,21 +24,25 @@ const PersonForm = ({ newName, newNumber, handleNameChange, handleNumberChange, 
 )
 
 // Persons component
-const Persons = ({ contacts }) => (
+const Persons = ({ contacts, handleCheckboxChange }) => (
   <div>
     {contacts.map((contact, index) => (
       <p key={index}>
+        <input type="checkbox" onChange={(event) => handleCheckboxChange(contact.id, event.target.checked)} />
         {contact.name}: {contact.number}
       </p>
     ))}
   </div>
 )
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 const App = () => {
   const [contacts, setContacts] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
+  const [selectedContacts, setSelectedContacts] = useState([])
 
   // Fetch data from server
   useEffect(() => {
@@ -47,6 +51,27 @@ const App = () => {
         setContacts(response.data);
       })
   }, [])
+
+  const handleCheckboxChange = (id, isChecked) => {
+    setSelectedContacts(prevSelectedContacts =>
+      isChecked
+        ? [...prevSelectedContacts, id]
+        : prevSelectedContacts.filter(contactId => contactId !== id)
+    )
+  }
+
+  const handleDeleteSelected = () => {
+    if (selectedContacts.length > 0) {
+      if (window.confirm("Are you sure you want to delete the selected contacts?")) {
+        const promises = selectedContacts.map(id => deleteContact(id))
+        Promise.all(promises)
+          .then(() => {
+            setContacts(contacts.filter(contact => !selectedContacts.includes(contact.id)))
+            setSelectedContacts([])
+          })
+      }
+    }
+  }
 
   const handleConcat = (event) => {
     event.preventDefault();
@@ -72,24 +97,17 @@ const App = () => {
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   }
-  const filteredContacts = contacts.filter(contact =>
-    contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    contact.number.includes(searchTerm)
-  );
+  const contactsToShow = searchTerm
+    ? contacts.filter(contact => contact.name.toLowerCase().includes(searchTerm.toLowerCase()))
+    : contacts
   
 
   return (
     <div>
-      <h2>Phonebook</h2>
       <Filter searchTerm={searchTerm} handleSearchChange={handleSearchChange} />
-      <PersonForm
-        newName={newName}
-        newNumber={newNumber}
-        handleNameChange={handleNameChange}
-        handleNumberChange={handleNumberChange}
-        handleConcat={handleConcat}
-      />
-      <Persons contacts={filteredContacts} />
+      <PersonForm newName={newName} newNumber={newNumber} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} handleConcat={handleConcat} />
+      <Persons contacts={contactsToShow} handleCheckboxChange={handleCheckboxChange} />
+      <button onClick={handleDeleteSelected}>Delete Selected</button>
     </div>
   )
 }

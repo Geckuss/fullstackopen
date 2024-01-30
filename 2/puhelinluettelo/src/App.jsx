@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
+import { getAll, create } from './components/contactsService'
 
 // Filter component
 const Filter = ({ searchTerm, handleSearchChange }) => (
@@ -42,8 +42,7 @@ const App = () => {
 
   // Fetch data from server
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
+    getAll()
       .then(response => {
         setContacts(response.data);
       })
@@ -56,8 +55,7 @@ const App = () => {
       alert(`${newName} is already added to phonebook`);
     } else {
       const newContact = { name: newName, number: newNumber }
-      axios
-        .post('http://localhost:3001/persons', newContact) // Replace with your server URL
+      create(newContact)
         .then(response => {
           setContacts(contacts.concat(response.data));
           setNewName('');

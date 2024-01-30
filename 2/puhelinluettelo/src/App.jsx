@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getAll, create, updateContact, deleteContact } from './components/contactsService'
+import './App.css';
 
 // Filter component
 const Filter = ({ searchTerm, handleSearchChange }) => (
@@ -35,6 +36,20 @@ const Persons = ({ contacts, handleCheckboxChange }) => (
   </div>
 )
 
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className="notification">
+      {message}
+    </div>
+  )
+}
+
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const App = () => {
@@ -43,6 +58,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedContacts, setSelectedContacts] = useState([])
+  const [notification, setNotification] = useState(null)
 
   // Fetch data from server
   useEffect(() => {
@@ -64,10 +80,15 @@ const App = () => {
     if (selectedContacts.length > 0) {
       if (window.confirm("Are you sure you want to delete the selected contacts?")) {
         const promises = selectedContacts.map(id => deleteContact(id))
+        const deletedNames = selectedContacts.map(id => contacts.find(contact => contact.id === id).name).join(', ')
         Promise.all(promises)
           .then(() => {
             setContacts(contacts.filter(contact => !selectedContacts.includes(contact.id)))
             setSelectedContacts([])
+            setNotification(`Deleted ${deletedNames}`)
+            setTimeout(() => {
+              setNotification(null)
+            }, 5000)
           })
       }
     }
@@ -83,6 +104,10 @@ const App = () => {
         updateContact(existingContact.id, updatedContact)
           .then(response => {
             setContacts(contacts.map(contact => contact.id !== existingContact.id ? contact : response.data));
+            setNotification(`Updated ${newName}'s number`)
+            setTimeout(() => {
+              setNotification(null)
+            }, 5000)
           })
       }
     } else {
@@ -92,6 +117,10 @@ const App = () => {
           setContacts(contacts.concat(response.data));
           setNewName('');
           setNewNumber('');
+          setNotification(`Added ${newName}`)
+          setTimeout(() => {
+            setNotification(null)
+          }, 5000)
         })
     }
   }
@@ -112,6 +141,7 @@ const App = () => {
 
   return (
     <div>
+      <Notification message={notification} />
       <Filter searchTerm={searchTerm} handleSearchChange={handleSearchChange} />
       <PersonForm newName={newName} newNumber={newNumber} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} handleConcat={handleConcat} />
       <Persons contacts={contactsToShow} handleCheckboxChange={handleCheckboxChange} />

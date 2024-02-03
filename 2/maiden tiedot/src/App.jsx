@@ -11,6 +11,7 @@ const CountryService = {
 function App() {
   const [countries, setCountries] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCountry, setSelectedCountry] = useState(null);
 
   useEffect(() => {
     CountryService.getAll().then(response => setCountries(response.data));
@@ -18,6 +19,11 @@ function App() {
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
+    setSelectedCountry(null);
+  };
+
+  const handleShowClick = (country) => {
+    setSelectedCountry(country);
   };
 
   const filteredCountries = countries.filter(country =>
@@ -43,8 +49,19 @@ function App() {
             : filteredCountries.map(country => (
                 <div key={country.name.common}>
                   {country.name.common}
+                  <button onClick={() => handleShowClick(country)}>Show</button>
                 </div>
               ))
+      )}
+      {selectedCountry && (
+        <div>
+          <h2>{selectedCountry.name.common}</h2>
+          <p>Capital: {filteredCountries[0].capital}</p>
+          <p>Population: {selectedCountry.population}</p>
+          <p>Area: {selectedCountry.area}</p>
+          <p>Languages: {Object.values(selectedCountry.languages).join(', ')}</p>
+          <img src={selectedCountry.flags.png} alt={`Flag of ${selectedCountry.name.common}`} />
+        </div>
       )}
     </div>
   );

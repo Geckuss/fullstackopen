@@ -1,7 +1,7 @@
 body {
   font-family: 'Ubuntu', sans-serif;
   background-color: #ffffff;
-  padding: 30px;
+  padding: 20px;
 }
 
 input, button {
@@ -10,7 +10,7 @@ input, button {
 }
 
 button {
-  background-color: #095c0d; /* Green */
+  background-color: #727272; /* Green */
   border: none;
   color: white;
   text-align: center;
@@ -22,7 +22,7 @@ button {
 }
 
 button:hover {
-  background-color: #2aad31;
+  background-color: #3a3a3a;
 }
 
 

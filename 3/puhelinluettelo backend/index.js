@@ -67,23 +67,35 @@
   }
 
   app.post('/api/persons', (request, response) => {
-  const body = request.body
+    const body = request.body
 
-  if (!body.content) {
-    return response.status(400).json({ 
-      error: 'content missing' 
-    })
-  }
+    if (!body.content) {
+      return response.status(400).json({ 
+        error: 'content missing' 
+      })
+    }
 
-  const person = {
-    id: generateId(),
-    content: body.content,
-    number: body.important || false,
-  }
+    if (!body.number) {
+      return response.status(400).json({ 
+        error: 'number missing' 
+      })
+    }
 
-  persons = persons.concat(person)
+    if (persons.find(person => person.content === body.content)) {
+      return response.status(400).json({ 
+        error: 'name must be unique' 
+      })
+    }
 
-  response.json(person)
+    const person = {
+      id: generateId(),
+      content: body.content,
+      number: body.number,
+    }
+
+    persons = persons.concat(person)
+
+    response.json(person)
   })
   
   const PORT = 3001

@@ -9,7 +9,7 @@ captain_morgan.token('body', function (req, res) { return JSON.stringify(req.bod
 app.use(cors())  
 app.use(express.json())
 app.use(captain_morgan(':method :url :status :res[name-length] - :response-time ms :body'));
-app.use(express.static('dist'))
+
 
 ///////////////////////GET
 
@@ -45,6 +45,8 @@ app.get('/api/persons/:id', async (request, response, next) => {
     next(error);
   }
 });
+
+app.use(express.static('dist'))
 
 ///////////////////////DELETE
 

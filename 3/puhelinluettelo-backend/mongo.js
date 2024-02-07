@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 require('dotenv').config()
-const password = process.argv[2]
 const action = process.argv[3]
 const name = process.argv[4]
 const number = process.argv[5]

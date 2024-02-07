@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const Person = require('./mongo')
 const express = require('express')
 const captain_morgan = require('morgan')
+const path = require('path');
 const cors = require('cors')
 const app = express()
 captain_morgan.token('body', function (req, res) { return JSON.stringify(req.body) });
@@ -13,9 +14,9 @@ app.use(captain_morgan(':method :url :status :res[name-length] - :response-time 
 
 ///////////////////////GET
 
-app.get('/', (request, response) => {
-  response.send('<h1>Hello World!</h1>')
-})
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
 
 app.get('/api/persons', (request, response) => {
   Person.find({}).then(persons => {

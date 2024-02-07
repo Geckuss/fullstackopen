@@ -24,40 +24,40 @@ const personSchema = new mongoose.Schema({
 const Person = mongoose.model('Person', personSchema)
 
 if (action === 'get') {
-    // List all persons
-    console.log('phonebook:')
-    Person.find({}).then(result => {
-      result.forEach(person => {
-        console.log(`${person.name} ${person.number}`)
-      })
-      mongoose.connection.close()
+  // List all persons
+  console.log('phonebook:')
+  Person.find({}).then(result => {
+    result.forEach(person => {
+      console.log(`${person.name} ${person.number}`)
     })
-  } else if (action === 'add') {
-    // Add a new person
-    const name = process.argv[4]
-    const number = process.argv[5]
-  
-    const person = new Person({
-      name: name,
-      number: number,
-    })
-  
-    person.save().then(result => {
-      console.log(`added ${name} number ${number} to phonebook`)
-      mongoose.connection.close()
-    })
-  } else if (action === 'delete') {
-    // Delete a person
-    Person.deleteOne({ name: name }).then(result => {
-      console.log(`deleted ${name} from phonebook`)
-      mongoose.connection.close()
-    })
-  } else if (action === 'edit') {
-    // Edit a person's number
-    Person.findOneAndUpdate({ name: name }, { number: number }, { new: true }).then(result => {
-      console.log(`changed ${name}'s number to ${number}`)
-      mongoose.connection.close()
-    })
-  }
+    mongoose.connection.close()
+  })
+} else if (action === 'add') {
+  // Add a new person
+  const name = process.argv[4]
+  const number = process.argv[5]
 
-  module.exports = Person
+  const person = new Person({
+    name: name,
+    number: number,
+  })
+
+  person.save().then(() => {
+    console.log(`added ${name} number ${number} to phonebook`)
+    mongoose.connection.close()
+  })
+} else if (action === 'delete') {
+  // Delete a person
+  Person.deleteOne({ name: name }).then(() => {
+    console.log(`deleted ${name} from phonebook`)
+    mongoose.connection.close()
+  })
+} else if (action === 'edit') {
+  // Edit a person's number
+  Person.findOneAndUpdate({ name: name }, { number: number }, { new: true }).then(() => {
+    console.log(`changed ${name}'s number to ${number}`)
+    mongoose.connection.close()
+  })
+}
+
+module.exports = Person

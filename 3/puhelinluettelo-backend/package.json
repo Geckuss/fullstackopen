@@ -10,7 +10,8 @@
     "build:ui": "rm -rf dist && cd ../puhelinluettelo-frontend/ && npm run build && cp -r dist ../puhelinluettelo-backend",
     "deploy": "fly deploy",
     "deploy:full": "npm run build:ui && npm run deploy",
-    "logs:prod": "fly logs"
+    "logs:prod": "fly logs",
+    "lint": "eslint ."
   },
   "author": "Lauri Heinonen",
   "license": "ISC",
@@ -24,6 +25,7 @@
   },
   "devDependencies": {
     "@flydotio/dockerfile": "^0.5.0",
+    "eslint": "^8.56.0",
     "nodemon": "^2.0.20"
   }
 }

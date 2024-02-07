@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useEffect, useState } from 'react'
 import { getAll, create, updateContact, deleteContact } from './components/contactsService'
 import './App.css';

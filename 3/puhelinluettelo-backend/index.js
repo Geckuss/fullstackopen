@@ -1,22 +1,21 @@
-const mongoose = require('mongoose')
 const Person = require('./mongo')
 const express = require('express')
 const captain_morgan = require('morgan')
-const path = require('path');
+const path = require('path')
 const cors = require('cors')
 const app = express()
-captain_morgan.token('body', function (req, res) { return JSON.stringify(req.body) });
+captain_morgan.token('body', function (req) { return JSON.stringify(req.body) })
 
-app.use(cors())  
+app.use(cors())
 app.use(express.json())
-app.use(captain_morgan(':method :url :status :res[name-length] - :response-time ms :body'));
+app.use(captain_morgan(':method :url :status :res[name-length] - :response-time ms :body'))
 
 
 ///////////////////////GET
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-});
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'))
+})
 
 app.get('/api/persons', (request, response) => {
   Person.find({}).then(persons => {
@@ -26,26 +25,26 @@ app.get('/api/persons', (request, response) => {
 
 app.get('/info', async (request, response, next) => {
   try {
-    const persons = await Person.find({});
+    const persons = await Person.find({})
     response.send(`<p>Phonebook has info for ${persons.length} people</p>
     <p>${new Date()}</p>`)
   } catch (error) {
-    next(error);
+    next(error)
   }
-});
+})
 
 app.get('/api/persons/:id', async (request, response, next) => {
   try {
-    const person = await Person.findById(request.params.id);
+    const person = await Person.findById(request.params.id)
     if (person) {
-      response.json(person);
+      response.json(person)
     } else {
-      response.status(404).end();
+      response.status(404).end()
     }
   } catch (error) {
-    next(error);
+    next(error)
   }
-});
+})
 
 app.use(express.static('dist'))
 
@@ -53,33 +52,33 @@ app.use(express.static('dist'))
 
 app.delete('/api/persons/:id', async (request, response, next) => {
   try {
-    const id = request.params.id;
-    const result = await Person.deleteOne({ _id: id });
+    const id = request.params.id
+    const result = await Person.deleteOne({ _id: id })
     if (result.deletedCount > 0) {
-      console.log(`deleted person with id ${id} from phonebook`);
-      response.status(204).end();
+      console.log(`deleted person with id ${id} from phonebook`)
+      response.status(204).end()
     } else {
-      response.status(404).send({ error: 'person not found' });
+      response.status(404).send({ error: 'person not found' })
     }
   } catch (error) {
-    next(error);
+    next(error)
   }
-});
-    
+})
+
 ///////////////////////POST
 
 app.post('/api/persons', async (request, response, next) => {
   const body = request.body
 
   if (!body.name || body.name.length < 3) {
-    return response.status(400).json({ 
-      error: 'name must be at least 3 characters long' 
+    return response.status(400).json({
+      error: 'name must be at least 3 characters long'
     })
   }
 
   if (!body.number || body.number.length < 8) {
-    return response.status(400).json({ 
-      error: 'number must be at least 8 characters long' 
+    return response.status(400).json({
+      error: 'number must be at least 8 characters long'
     })
   }
 
@@ -100,19 +99,19 @@ app.post('/api/persons', async (request, response, next) => {
 ///////////////////////PUT
 
 app.put('/api/persons/:id', async (request, response, next) => {
-  const id = request.params.id;
-  const body = request.body;
+  const id = request.params.id
+  const body = request.body
 
   if (!body.name || body.name.length < 3) {
     return response.status(400).json({
-      error: 'name must be at least 3 characters long' 
-    });
+      error: 'name must be at least 3 characters long'
+    })
   }
 
   if (!body.number) {
     return response.status(400).json({
-      error: 'number missing' 
-    });
+      error: 'number missing'
+    })
   }
 
   try {
@@ -120,20 +119,20 @@ app.put('/api/persons/:id', async (request, response, next) => {
       id,
       { name: body.name, number: body.number },
       { new: true }
-    );
+    )
 
     if (!updatedPerson) {
-      return response.status(404).json({ 
-        error: 'person not found' 
-      });
+      return response.status(404).json({
+        error: 'person not found'
+      })
     }
 
     console.log(`updated ${body.name} number ${body.number} in phonebook`)
-    response.json(updatedPerson);
+    response.json(updatedPerson)
   } catch (error) {
-    next(error);
+    next(error)
   }
-});
+})
 
 ///////////////////////ERROR HANDLING
 

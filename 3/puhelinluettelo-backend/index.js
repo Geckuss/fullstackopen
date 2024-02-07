@@ -1,43 +1,15 @@
+const mongoose = require('mongoose')
+const Person = require('./mongo')
 const express = require('express')
-const morgan = require('morgan')
+const captain_morgan = require('morgan')
 const cors = require('cors')
 const app = express()
-morgan.token('body', function (req, res) { return JSON.stringify(req.body) });
+captain_morgan.token('body', function (req, res) { return JSON.stringify(req.body) });
 
 app.use(cors())  
 app.use(express.json())
-app.use(morgan(':method :url :status :res[name-length] - :response-time ms :body'));
+app.use(captain_morgan(':method :url :status :res[name-length] - :response-time ms :body'));
 app.use(express.static('dist'))
-
-let persons = [
-  {
-    id: 1,
-    name: "Arto Hellas",
-    number: "040-123456",
-  },
-  {
-    id: 2,
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-  },
-  {
-    id: 3,
-    name: "Dan Abramov",
-    number: "12-43-234345",
-  },
-  {
-    id: 4,
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-  }
-]
-
-const generateId = () => {
-  const maxId = persons.length > 0
-    ? Math.max(...persons.map(n => n.id))
-    : 0
-  return maxId + 1
-}
 
 ///////////////////////GET
 
@@ -46,7 +18,9 @@ app.get('/', (request, response) => {
 })
 
 app.get('/api/persons', (request, response) => {
-  response.json(persons)
+  Person.find({}).then(persons => {
+    response.json(persons)
+  })
 })
 
 app.get('/info', (request, response) => {
@@ -66,76 +40,76 @@ app.get('/api/persons/:id', (request, response) => {
 
 ///////////////////////DELETE
 
-app.delete('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  persons = persons.filter(person => person.id !== id)
-
-  response.status(204).end()
-})
-
+app.delete('/api/persons/:id', async (request, response, next) => {
+  try {
+    const id = request.params.id;
+    const result = await Person.deleteOne({ _id: id });
+    if (result.deletedCount > 0) {
+      console.log(`deleted person with id ${id} from phonebook`);
+      response.status(204).end();
+    } else {
+      response.status(404).send({ error: 'person not found' });
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+    
 ///////////////////////POST
 
-  app.post('/api/persons', (request, response) => {
+app.post('/api/persons', async (request, response, next) => {
   const body = request.body
-
-  if (!body.name) {
-    return response.status(400).json({ 
-      error: 'name missing' 
-    })
-  }
-
-  if (!body.number) {
-    return response.status(400).json({ 
-      error: 'number missing' 
-    })
-  }
-
-  if (persons.find(person => person.name === body.name)) {
-    return response.status(400).json({ 
-      error: 'name must be unique' 
-    })
-  }
-
-  const person = {
-    id: generateId(),
-    name: body.name,
-    number: body.number,
-  }
-
-  persons = persons.concat(person)
-
-  response.json(person)
-})
-
-///////////////////////PUT
-
-app.put('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id);
-  const body = request.body;
 
   if (!body.name || !body.number) {
     return response.status(400).json({ 
       error: 'name or number missing' 
+    })
+  }
+
+  try {
+    const updatedPerson = await Person.findOneAndUpdate(
+      { name: body.name },
+      { number: body.number },
+      { new: true, upsert: true }
+    )
+
+    console.log(`added or updated ${body.name} number ${body.number} in phonebook`)
+    response.json(updatedPerson)
+  } catch (error) {
+    next(error)
+  }
+})
+
+///////////////////////PUT
+
+app.put('/api/persons/:id', async (request, response, next) => {
+  const id = request.params.id;
+  const body = request.body;
+
+  if (!body.name || !body.number) {
+    return response.status(400).json({
+      error: 'name or number missing' 
     });
   }
 
-  const personIndex = persons.findIndex(person => person.id === id);
+  try {
+    const updatedPerson = await Person.findByIdAndUpdate(
+      id,
+      { name: body.name, number: body.number },
+      { new: true }
+    );
 
-  if (personIndex === -1) {
-    return response.status(404).json({ 
-      error: 'person not found' 
-    });
+    if (!updatedPerson) {
+      return response.status(404).json({ 
+        error: 'person not found' 
+      });
+    }
+
+    console.log(`updated ${body.name} number ${body.number} in phonebook`)
+    response.json(updatedPerson);
+  } catch (error) {
+    next(error);
   }
-
-  const updatedPerson = {
-    ...persons[personIndex],
-    name: body.name,
-    number: body.number,
-  };
-
-  persons[personIndex] = updatedPerson;
-
-  response.json(updatedPerson);
 });
 
 ///////////////////////404 HANDLING

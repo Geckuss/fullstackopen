@@ -29,7 +29,7 @@ const Persons = ({ contacts, handleCheckboxChange }) => (
   <div>
     {contacts.map((contact, index) => (
       <p key={index}>
-        <input type="checkbox" onChange={(event) => handleCheckboxChange(contact.id, event.target.checked)} />
+        <input type="checkbox" onChange={(event) => handleCheckboxChange(contact._id, event.target.checked)} />
         {contact.name}: {contact.number}
       </p>
     ))}
@@ -83,26 +83,33 @@ const App = () => {
   useEffect(() => {
     getAll()
       .then(response => {
+        console.log('response.data', response.data);
         setContacts(response.data);
       })
   }, [])
 
   const handleCheckboxChange = (id, isChecked) => {
+    console.log('id', id);
+    console.log('isChecked', isChecked);
     setSelectedContacts(prevSelectedContacts =>
       isChecked
         ? [...prevSelectedContacts, id]
         : prevSelectedContacts.filter(contactId => contactId !== id)
+      
     )
   }
 
   const handleDeleteSelected = () => {
     if (selectedContacts.length > 0) {
+      console.log(selectedContacts)
       if (window.confirm("Are you sure you want to delete the selected contacts?")) {
+        console.log('deleting', selectedContacts)
         const promises = selectedContacts.map(id => deleteContact(id))
-        const deletedNames = selectedContacts.map(id => contacts.find(contact => contact.id === id).name).join(', ')
+        console.log('promises', promises)
+        const deletedNames = selectedContacts.map(id => contacts.find(contact => contact._id === id).name).join(', ')
         Promise.all(promises)
           .then(() => {
-            setContacts(contacts.filter(contact => !selectedContacts.includes(contact.id)))
+            setContacts(contacts.filter(contact => !selectedContacts.includes(contact._id)))
             setSelectedContacts([])
             setNotification(`Deleted ${deletedNames}`)
             setTimeout(() => {
@@ -120,9 +127,9 @@ const App = () => {
     if (existingContact) {
       if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
         const updatedContact = { ...existingContact, number: newNumber };
-        updateContact(existingContact.id, updatedContact)
+        updateContact(existingContact._id, updatedContact)
           .then(response => {
-            setContacts(contacts.map(contact => contact.id !== existingContact.id ? contact : response.data));
+            setContacts(contacts.map(contact => contact._id !== existingContact._id ? contact : response.data));
             setNotification(`Updated ${newName}'s number`)
             setTimeout(() => {
               setNotification(null)
@@ -133,7 +140,7 @@ const App = () => {
             setTimeout(() => {
               setError(null)
             }, 5000)
-            setContacts(contacts.filter(contact => contact.id !== existingContact.id))
+            setContacts(contacts.filter(contact => contact._id !== existingContact._id))
           })
       }
     } else {

@@ -11,6 +11,7 @@ export const create = newContact => {
 }
 
 export const deleteContact = id => {
+    console.log('deleting', id)
     return axios.delete(`${baseUrl}/${id}`)
 }
 

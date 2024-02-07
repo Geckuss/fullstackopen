@@ -70,9 +70,15 @@ app.delete('/api/persons/:id', async (request, response, next) => {
 app.post('/api/persons', async (request, response, next) => {
   const body = request.body
 
-  if (!body.name || !body.number) {
+  if (!body.name || body.name.length < 3) {
     return response.status(400).json({ 
-      error: 'name or number missing' 
+      error: 'name must be at least 3 characters long' 
+    })
+  }
+
+  if (!body.number) {
+    return response.status(400).json({ 
+      error: 'number missing' 
     })
   }
 
@@ -96,9 +102,15 @@ app.put('/api/persons/:id', async (request, response, next) => {
   const id = request.params.id;
   const body = request.body;
 
-  if (!body.name || !body.number) {
+  if (!body.name || body.name.length < 3) {
     return response.status(400).json({
-      error: 'name or number missing' 
+      error: 'name must be at least 3 characters long' 
+    });
+  }
+
+  if (!body.number) {
+    return response.status(400).json({
+      error: 'number missing' 
     });
   }
 

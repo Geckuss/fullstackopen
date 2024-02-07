@@ -135,11 +135,10 @@ const App = () => {
             }, 5000)
           })
           .catch(error => {
-            setError(`Information of ${newName} has already been removed from server`)
+            setError(error.response.data.error)
             setTimeout(() => {
               setError(null)
             }, 5000)
-            setContacts(contacts.filter(contact => contact._id !== existingContact._id))
           })
       }
     } else {
@@ -152,6 +151,12 @@ const App = () => {
           setNotification(`Added ${newName}`)
           setTimeout(() => {
             setNotification(null)
+          }, 5000)
+        })
+        .catch(error => {
+          setError(error.response.data.error)
+          setTimeout(() => {
+            setError(null)
           }, 5000)
         })
     }

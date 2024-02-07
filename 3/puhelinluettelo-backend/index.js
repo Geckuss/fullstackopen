@@ -76,9 +76,9 @@ app.post('/api/persons', async (request, response, next) => {
     })
   }
 
-  if (!body.number) {
+  if (!body.number || body.number.length < 8) {
     return response.status(400).json({ 
-      error: 'number missing' 
+      error: 'number must be at least 8 characters long' 
     })
   }
 

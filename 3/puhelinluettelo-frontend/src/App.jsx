@@ -121,6 +121,14 @@ const App = () => {
 
   const handleConcat = (event) => {
     event.preventDefault();
+    const phoneNumberPattern = /^\d{2,3}-\d+$/;
+    if (newNumber.length < 8 || !phoneNumberPattern.test(newNumber)) {
+      setError('Error: Phone number must be at least 8 characters long and in the format XX-XXXXXX or XXX-XXXXX');
+      setTimeout(() => {
+        setError(null)
+      }, 5000)
+      return;
+    }
     const existingContact = contacts.find(contact => contact.name === newName);
     
     if (existingContact) {

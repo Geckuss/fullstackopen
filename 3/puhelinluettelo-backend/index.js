@@ -23,20 +23,28 @@ app.get('/api/persons', (request, response) => {
   })
 })
 
-app.get('/info', (request, response) => {
-  response.send(`<p>Phonebook has info for ${persons.length} people</p>
-  <p>${new Date()}</p>`)
-})
-
-app.get('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  const person = persons.find(person => person.id === id)
-  if (person) {
-    response.json(person)
-  } else {
-    response.status(404).end()
+app.get('/info', async (request, response, next) => {
+  try {
+    const persons = await Person.find({});
+    response.send(`<p>Phonebook has info for ${persons.length} people</p>
+    <p>${new Date()}</p>`)
+  } catch (error) {
+    next(error);
   }
-})
+});
+
+app.get('/api/persons/:id', async (request, response, next) => {
+  try {
+    const person = await Person.findById(request.params.id);
+    if (person) {
+      response.json(person);
+    } else {
+      response.status(404).end();
+    }
+  } catch (error) {
+    next(error);
+  }
+});
 
 ///////////////////////DELETE
 
@@ -111,6 +119,20 @@ app.put('/api/persons/:id', async (request, response, next) => {
     next(error);
   }
 });
+
+///////////////////////ERROR HANDLING
+
+app.use((error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
+  }
+
+  next(error)
+})
 
 ///////////////////////404 HANDLING
 const unknownEndpoint = (request, response) => {response.status(404).send({ error: 'unknown endpoint' })}

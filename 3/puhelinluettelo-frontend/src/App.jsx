@@ -83,7 +83,6 @@ const App = () => {
   useEffect(() => {
     getAll()
       .then(response => {
-        console.log('response.data', response.data);
         setContacts(response.data);
       })
   }, [])

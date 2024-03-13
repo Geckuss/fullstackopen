@@ -4,7 +4,7 @@ const action = process.argv[3]
 const name = process.argv[4]
 const number = process.argv[5]
 
-const url = `mongodb+srv://fullstackuser:${process.env.DB_PASSWORD}@fullstack.6c7jpa4.mongodb.net/?retryWrites=true&w=majority`
+const url = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@fullstack.6c7jpa4.mongodb.net/?retryWrites=true&w=majority`
 
 mongoose.connect(url)
 

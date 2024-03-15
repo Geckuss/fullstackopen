@@ -1,3 +1,7 @@
-const PORT = 3003
+import dotenv from 'dotenv';
+dotenv.config();
 
-export default { PORT }
+const PORT = process.env.PORT;
+const DB_URL = process.env.DB_URL;
+
+export default { PORT, DB_URL}

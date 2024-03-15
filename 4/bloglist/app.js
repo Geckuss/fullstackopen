@@ -2,8 +2,7 @@ import express, { json } from 'express'
 const app = express()
 import cors from 'cors'
 import { Schema, model, connect } from 'mongoose'
-import dotenv from 'dotenv'
-dotenv.config()
+import config from './utils/config.js'
 
 const blogSchema = Schema({
   title: String,

@@ -13,7 +13,7 @@ const blogSchema = mongoose.Schema({
 
 const Blog = mongoose.model('Blog', blogSchema)
 
-const mongoUrl = process.env.DB_HOST
+const mongoUrl = process.env.DB_URL
 mongoose.connect(mongoUrl)
 
 app.use(cors())

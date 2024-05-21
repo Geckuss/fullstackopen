@@ -1,6 +1,6 @@
 import { test, describe } from 'node:test'
 import { strictEqual } from 'node:assert'
-import { dummy, totalLikes, favoriteBlog } from '../utils/list_helper.js'
+import { dummy, totalLikes, favoriteBlog, mostBlogs } from '../utils/list_helper.js'
 
 describe('dummy test', () => {
     test('dummy returns one', () => {
@@ -34,5 +34,21 @@ describe('favoriteBlog tests', () => {
     
         const result = favoriteBlog(blogs)
         strictEqual(result, blogs[2])
+    })
+})
+
+describe('mostBlogs tests', () => {
+    test('mostBlogs returns the author with the most blogs and the number of blogs', () => {
+        const blogs = [
+            { title: 'Blog 1', author: 'Author 1', likes: 5 },
+            { title: 'Blog 2', author: 'Author 1', likes: 10 },
+            { title: 'Blog 3', author: 'Author 2', likes: 15 },
+            { title: 'Blog 4', author: 'Author 2', likes: 20 },
+            { title: 'Blog 5', author: 'Author 2', likes: 25 },
+        ]
+
+        const result = mostBlogs(blogs)
+        strictEqual(result.author, 'Author 2')
+        strictEqual(result.blogs, 3)
     })
 })

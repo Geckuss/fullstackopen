@@ -1,10 +1,10 @@
 import { test, describe } from 'node:test'
 import { strictEqual } from 'node:assert'
-import { dummy } from '../utils/list_helper.js'
+import { listhelper } from '../utils/list_helper.js'
 
 test('dummy returns one', () => {
   const blogs = []
 
-  const result = dummy(blogs)
+  const result = listhelper.dummy(blogs)
   strictEqual(result, 1)
 })

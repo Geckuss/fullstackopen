@@ -31,7 +31,7 @@ describe('favoriteBlog tests', () => {
             { title: 'Blog 2', likes: 10 },
             { title: 'Blog 3', likes: 15 },
         ]
-    
+
         const result = favoriteBlog(blogs)
         strictEqual(result, blogs[2])
     })

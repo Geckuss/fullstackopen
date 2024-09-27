@@ -6,7 +6,7 @@ import { dummy, totalLikes, favoriteBlog, mostBlogs, mostLikes } from '../utils/
 router.get('/', async (request, response) => {
     try {
         const blogs = await Blog.find({});
-        
+
         const dummyResult = dummy(blogs);
         const totalLikesResult = totalLikes(blogs);
         const favoriteBlogResult = favoriteBlog(blogs);
@@ -25,17 +25,17 @@ router.get('/', async (request, response) => {
         response.status(500).json({ error: 'Something went wrong' });
     }
 });
-  
+
 router.post('/', async (request, response) => {
     const { title, author, url, likes } = request.body;
-  
+
     const blog = new Blog({
-      title,
-      author,
-      url,
-      likes
+        title,
+        author,
+        url,
+        likes
     });
-  
+
     const savedBlog = await blog.save();
     response.json(savedBlog);
 });
